@@ -8,10 +8,10 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NoticiasAdapter.NoticiasHolder.ClickListener {
     private var noticias: MutableList<Noticia> = mutableListOf();
-
-    //private val adaptador: NoticiasAdapter = NoticiasAdapter(this)
+    //Aqui está el error
+    val adaptador= NoticiasAdapter(this, noticias)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,10 +30,7 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        val adaptador: NoticiasAdapter = NoticiasAdapter(noticias)
-        val listaNoticia: RecyclerView = findViewById(R.id.listaNoticias)
-        listaNoticia.layoutManager = LinearLayoutManager(this)
-        listaNoticia.adapter = adaptador
+        actualizar()
 
         //listaNoticia.setOnClickListener(update())
 
@@ -48,11 +45,25 @@ class MainActivity : AppCompatActivity() {
 
     private fun agregarElemento(){
         noticias.add(Noticia("Elemento Nuevo","https://img.youtube.com/vi/bpOSxM0rNPM/0.jpg") )
-        val adaptador: NoticiasAdapter = NoticiasAdapter(noticias)
+        actualizar()
+    }
+    fun actualizar(){
         val listaNoticia: RecyclerView = findViewById(R.id.listaNoticias)
         listaNoticia.layoutManager = LinearLayoutManager(this)
         listaNoticia.adapter = adaptador
     }
+
+    override fun onItemClicked(position: Int) {
+        noticias[position]= Noticia("Actualizado", "https://chordsandcommas.files.wordpress.com/2018/05/tranquility-base-acrtic-monkeys.jpg")
+            actualizar()
+    }
+
+    override fun onItemLongClicked(position: Int): Boolean {
+        noticias.removeAt(position)
+        actualizar()
+        return true
+    }
+
 
 }
 

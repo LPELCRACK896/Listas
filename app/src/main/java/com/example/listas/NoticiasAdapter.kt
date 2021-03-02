@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-class NoticiasAdapter(/**private val li: OnItemClickListener,**/ private var noticias: MutableList<Noticia>): RecyclerView.Adapter<NoticiasAdapter.NoticiasHolder>() {
+class NoticiasAdapter(private val listener: NoticiasHolder.ClickListener, private var noticias: MutableList<Noticia>): RecyclerView.Adapter<NoticiasAdapter.NoticiasHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoticiasHolder {
         val view: View =
@@ -22,38 +22,26 @@ class NoticiasAdapter(/**private val li: OnItemClickListener,**/ private var not
     override fun onBindViewHolder(holder: NoticiasHolder, position: Int) {
         val actual: Noticia = this.noticias[position]
 
-        holder.bind(actual)
+        holder.bind(actual, listener)
     }
 
-    inner class NoticiasHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(noticias: Noticia) = with(itemView) {
+     class NoticiasHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(noticias: Noticia, listener:ClickListener) = with(itemView) {
             val txtTitulo: TextView = findViewById(R.id.txtTitulo)
             val imagen: ImageView = findViewById(R.id.imagen)
             txtTitulo.text = noticias.titulo
             Picasso.get().load(noticias.imagen).into(imagen)
+            setOnClickListener{
+                listener.onItemClicked(adapterPosition)
+            }
+            setOnLongClickListener{
+                listener.onItemLongClicked(adapterPosition)
+            }
         }
-        /**
-        init {
-        itemView.setOnClickListener(this)
-        }
-
-        fun onClick(v: View?) {
-        val position: Int = adapterPosition
-        if (position != RecyclerView.NO_POSITION) {
-        li.onItemClick(position)
-        }
-        }
-
+        interface ClickListener{
+            fun onItemClicked(position: Int)
+            fun onItemLongClicked(position: Int): Boolean
         }
 
-        interface OnItemClickListener {
-        abstract fun onItemClick(position: Int)
-        }
-
-        }
-
-        private fun View.setOnClickListener(noticiasHolder: NoticiasAdapter.NoticiasHolder) {
-
-        }**/
     }
 }
